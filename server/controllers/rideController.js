@@ -10,7 +10,9 @@ const rideSchema = Joi.object({
   price: Joi.number().min(0).required(),
   seats: Joi.number().integer().min(1).max(8).required(),
   phone: Joi.string().pattern(/^[0-9]{10}$/).required(),
-  description: Joi.string().allow('')
+  description: Joi.string().allow(''),
+  carModel: Joi.string().required(),
+  carType: Joi.string().valid('4-seater', '7-seater').required()
 });
 
 exports.createRide = async (req, res) => {
@@ -28,7 +30,9 @@ exports.createRide = async (req, res) => {
     seats: req.body.seats,
     seatsAvailable: req.body.seats, // Initially all seats are available
     phone: req.body.phone,
-    description: req.body.description
+    description: req.body.description,
+    carModel: req.body.carModel,
+    carType: req.body.carType
   });
 
   try {

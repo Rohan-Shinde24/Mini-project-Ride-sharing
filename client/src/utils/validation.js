@@ -52,8 +52,12 @@ export const createRideSchema = yup.object({
   seats: yup
     .number()
     .integer('Seats must be an integer')
-    .min(1, 'Vehicle capacity must be between 1 and 8.')
-    .max(8, 'Vehicle capacity must be between 1 and 8.')
+    .min(1, 'At least 1 seat must be available.')
+    .when('carType', {
+      is: '4-seater',
+      then: (schema) => schema.max(4, 'Max 4 seats allowed for a 4-seater car.'),
+      otherwise: (schema) => schema.max(7, 'Max 7 seats allowed for a 7-seater car.')
+    })
     .required('Number of seats is required')
     .typeError('Seats must be a number'),
   phone: yup
@@ -63,6 +67,13 @@ export const createRideSchema = yup.object({
   description: yup
     .string()
     .max(200, 'Description is too long'),
+  carModel: yup
+    .string()
+    .required('Car model is required (e.g., Toyota Innova)'),
+  carType: yup
+    .string()
+    .oneOf(['4-seater', '7-seater'], 'Please select a valid car type')
+    .required('Car type is required'),
 });
 
 export const profileUpdateSchema = yup.object({

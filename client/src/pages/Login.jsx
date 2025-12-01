@@ -23,7 +23,11 @@ const Login = () => {
     setServerError('');
     const result = await login(data.email, data.password);
     if (result.success) {
-      navigate('/dashboard');
+      if (result.user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     } else {
       setServerError(result.message);
     }

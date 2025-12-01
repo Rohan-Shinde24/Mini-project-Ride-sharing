@@ -303,6 +303,10 @@ const SearchRides = () => {
                         <Car className="h-4 w-4 mr-2 text-emerald-600" />
                         <span className="font-medium text-emerald-700">{ride.seatsAvailable} seats available</span>
                       </div>
+                      <div className="flex items-center bg-blue-50 px-2 py-1 rounded">
+                        <Car className="h-4 w-4 mr-2 text-blue-600" />
+                        <span className="font-medium text-blue-700">{ride.carModel} ({ride.carType})</span>
+                      </div>
                     </div>
                   </div>
                   

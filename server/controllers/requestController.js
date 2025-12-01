@@ -1,6 +1,7 @@
 const Request = require('../models/Request');
 const Ride = require('../models/Ride');
 
+
 exports.createRequest = async (req, res) => {
   const { rideId, seats = 1, phone } = req.body;
 
@@ -77,7 +78,10 @@ exports.updateRequestStatus = async (req, res) => {
     
     request.status = status;
     const updatedRequest = await request.save();
+
     res.send(updatedRequest);
+
+
 
   } catch (err) {
     res.status(400).send(err);
@@ -116,6 +120,28 @@ exports.getSentRequests = async (req, res) => {
       .sort({ createdAt: -1 });
     
     res.send(requests);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+};
+
+exports.cancelRequest = async (req, res) => {
+  try {
+    const request = await Request.findById(req.params.id).populate('ride');
+    if (!request) return res.status(404).send('Request not found');
+
+    // Check if user is the passenger
+    if (request.passenger.toString() !== req.user._id) {
+      return res.status(403).send('Access Denied');
+    }
+
+    // If request was accepted, restore seats
+    if (request.status === 'accepted') {
+      await Ride.findByIdAndUpdate(request.ride._id, { $inc: { seatsAvailable: request.seats } });
+    }
+
+    await Request.findByIdAndDelete(req.params.id);
+    res.send({ message: 'Request cancelled successfully' });
   } catch (err) {
     res.status(400).send(err);
   }

@@ -101,6 +101,10 @@ const CreateRide = () => {
     }
   };
 
+  // Watch car type to limit seats
+  const carType = watch('carType');
+  const maxSeats = carType === '4-seater' ? 4 : 7;
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-8rem)]">
       {/* Form Section */}
@@ -155,10 +159,33 @@ const CreateRide = () => {
                   label="Available Seats"
                   type="number"
                   min="1"
-                  max="8"
+                  max={maxSeats}
                   error={errors.seats?.message}
                   {...register('seats')}
                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Car Model"
+                  placeholder="e.g. Toyota Innova, Swift Dzire"
+                  error={errors.carModel?.message}
+                  {...register('carModel')}
+                />
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Car Type</label>
+                  <select
+                    className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    {...register('carType')}
+                  >
+                    <option value="">Select Type</option>
+                    <option value="4-seater">4 Seater (Hatchback/Sedan)</option>
+                    <option value="7-seater">7 Seater (SUV/MUV)</option>
+                  </select>
+                  {errors.carType && (
+                    <p className="text-sm font-medium text-red-500">{errors.carType.message}</p>
+                  )}
+                </div>
               </div>
 
               <Input

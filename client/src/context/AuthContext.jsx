@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await axios.post('/api/auth/login', { email, password });
-      const { token } = response.data;
+      const { token, user } = response.data;
       
       if (!token) {
         return {
@@ -54,21 +54,12 @@ export const AuthProvider = ({ children }) => {
         };
       }
 
-      // Decode token to get user ID
-      const decoded = decodeToken(token);
-      
-      // Create simple user object
-      const userData = {
-        _id: decoded._id,
-        email: email
-      };
-      
       localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('user', JSON.stringify(user));
       axios.defaults.headers.common['auth-token'] = token;
-      setUser(userData);
+      setUser(user);
       
-      return { success: true };
+      return { success: true, user };
     } catch (error) {
       let message = 'Login failed. Please try again.';
       
@@ -90,7 +81,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (name, email, password) => {
     try {
       const response = await axios.post('/api/auth/register', { name, email, password });
-      const { token } = response.data;
+      const { token, user } = response.data;
       
       if (!token) {
         return {
@@ -99,20 +90,10 @@ export const AuthProvider = ({ children }) => {
         };
       }
 
-      // Decode token to get user ID
-      const decoded = decodeToken(token);
-      
-      // Create simple user object
-      const userData = {
-        _id: decoded._id,
-        name: name,
-        email: email
-      };
-      
       localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('user', JSON.stringify(user));
       axios.defaults.headers.common['auth-token'] = token;
-      setUser(userData);
+      setUser(user);
       
       return { success: true };
     } catch (error) {

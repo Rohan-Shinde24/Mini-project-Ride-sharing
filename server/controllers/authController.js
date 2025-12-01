@@ -37,8 +37,16 @@ exports.register = async (req, res) => {
   try {
     const savedUser = await user.save();
     // Create and assign token
-    const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET);
-    res.header('auth-token', token).status(201).send({ token });
+    const token = jwt.sign({ _id: savedUser._id, role: savedUser.role }, process.env.JWT_SECRET);
+    res.header('auth-token', token).status(201).send({ 
+      token,
+      user: {
+        _id: savedUser._id,
+        name: savedUser.name,
+        email: savedUser.email,
+        role: savedUser.role
+      }
+    });
   } catch (err) {
     res.status(400).send(err);
   }
@@ -58,6 +66,14 @@ exports.login = async (req, res) => {
   if (!validPass) return res.status(400).send('Invalid password');
 
   // Create and assign token
-  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-  res.header('auth-token', token).status(200).send({ token });
+  const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET);
+  res.header('auth-token', token).status(200).send({ 
+    token,
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    }
+  });
 };

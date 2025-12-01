@@ -12,6 +12,10 @@ router.put('/:id/status', verify, requestController.updateRequestStatus);
 router.get('/received', verify, requestController.getReceivedRequests);
 
 // GET SENT REQUESTS (requests I made)
+// GET SENT REQUESTS (requests I made)
 router.get('/sent', verify, requestController.getSentRequests);
+
+// CANCEL REQUEST (Passenger Only)
+router.delete('/:id', verify, requestController.cancelRequest);
 
 module.exports = router;

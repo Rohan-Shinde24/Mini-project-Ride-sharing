@@ -46,6 +46,15 @@ const rideSchema = new mongoose.Schema({
   description: {
     type: String
   },
+  carModel: {
+    type: String,
+    required: true
+  },
+  carType: {
+    type: String,
+    enum: ['4-seater', '7-seater'],
+    required: true
+  },
   createdAt: {
     type: Date,
     default: Date.now

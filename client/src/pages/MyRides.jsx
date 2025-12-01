@@ -38,8 +38,14 @@ const MyRides = () => {
 
   const handleRequestAction = async (requestId, action) => {
     try {
-      await axios.patch(`/api/requests/${requestId}`, { status: action });
-      alert(`Request ${action}!`);
+      if (action === 'cancelled') {
+        if (!window.confirm('Are you sure you want to cancel this request?')) return;
+        await axios.delete(`/api/requests/${requestId}`);
+        alert('Request cancelled successfully');
+      } else {
+        await axios.put(`/api/requests/${requestId}/status`, { status: action });
+        alert(`Request ${action}!`);
+      }
       fetchData(); // Refresh data
     } catch (error) {
       alert(error.response?.data || `Failed to ${action} request`);
@@ -214,8 +220,8 @@ const MyRides = () => {
                         </div>
                       </div>
                     </div>
-                    {request.status === 'pending' && (
-                      <div className="flex gap-2">
+                    <div className="flex gap-2">
+                      {request.status === 'pending' && (
                         <Button
                           size="sm"
                           onClick={() => handleRequestAction(request._id, 'accepted')}
@@ -224,6 +230,8 @@ const MyRides = () => {
                           <CheckCircle className="h-4 w-4 mr-1" />
                           Accept
                         </Button>
+                      )}
+                      {(request.status === 'pending' || request.status === 'accepted') && (
                         <Button
                           size="sm"
                           variant="secondary"
@@ -231,10 +239,10 @@ const MyRides = () => {
                           className="bg-red-600 hover:bg-red-700 text-white"
                         >
                           <XCircle className="h-4 w-4 mr-1" />
-                          Reject
+                          {request.status === 'accepted' ? 'Cancel Booking' : 'Reject'}
                         </Button>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -277,6 +285,10 @@ const MyRides = () => {
                       </div>
                       <div className="flex gap-4 text-sm text-slate-600">
                         <div className="flex items-center">
+                          <Car className="h-4 w-4 mr-2 text-slate-400" />
+                          {request.ride?.carModel} ({request.ride?.carType})
+                        </div>
+                        <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-2 text-slate-400" />
                           {new Date(request.ride?.date).toLocaleDateString()}
                         </div>
@@ -286,8 +298,19 @@ const MyRides = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="text-xl font-bold text-emerald-600">
-                      ₹{request.ride?.price}
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="text-xl font-bold text-emerald-600">
+                        ₹{request.ride?.price}
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => handleRequestAction(request._id, 'cancelled')} // Reusing handleRequestAction but we need to modify it or create new handler
+                        className="bg-red-100 text-red-700 hover:bg-red-200 border-red-200"
+                      >
+                        <XCircle className="h-4 w-4 mr-1" />
+                        Cancel
+                      </Button>
                     </div>
                   </div>
                 </CardContent>

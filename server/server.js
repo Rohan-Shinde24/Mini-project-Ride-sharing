@@ -16,18 +16,12 @@ app.use(helmet());
 app.use(morgan('dev'));
 
 // Import Routes
-const authRoute = require('./routes/auth');
-const rideRoute = require('./routes/rides');
-const requestRoute = require('./routes/requests');
-const userRoute = require('./routes/users');
-const profileRoute = require('./routes/profile');
-
-// Route Middlewares
-app.use('/api/auth', authRoute);
-app.use('/api/rides', rideRoute);
-app.use('/api/requests', requestRoute);
-app.use('/api/users', userRoute);
-app.use('/api/profile', profileRoute);
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/rides', require('./routes/rides'));
+app.use('/api/requests', require('./routes/requests'));
+app.use('/api/profile', require('./routes/profile'));
+app.use('/api/admin', require('./routes/admin'));
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
@@ -38,4 +32,6 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log('Email User:', process.env.EMAIL_USER ? 'Set' : 'Not Set');
+  console.log('Email Pass:', process.env.EMAIL_PASS ? 'Set' : 'Not Set');
 });

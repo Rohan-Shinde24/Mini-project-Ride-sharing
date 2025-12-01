@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const argon2 = require('argon2');
 const { generateOtp } = require('../utils/generateOtp');
-const { sendOtpEmail } = require('../utils/emailService');
+const sendEmail = require('../utils/emailService');
 
 // Store OTPs temporarily (in production, use Redis or database)
 const otpStore = new Map();
@@ -24,6 +24,7 @@ const requestPasswordReset = async (req, res) => {
 
     // Generate OTP
     const otp = generateOtp();
+    console.log('DEBUG: Generated OTP for', email, 'is:', otp); // Log OTP for testing
     
     // Store OTP with expiration (10 minutes)
     otpStore.set(email, {
@@ -33,7 +34,9 @@ const requestPasswordReset = async (req, res) => {
 
     // Send OTP via email
     try {
-      await sendOtpEmail(email, otp);
+      const subject = 'Password Reset OTP';
+      const message = `Your OTP for password reset is: ${otp}. It expires in 10 minutes.`;
+      await sendEmail(email, subject, message);
       res.json({ message: 'OTP sent to your email' });
     } catch (emailError) {
       console.error('Email sending failed:', emailError);

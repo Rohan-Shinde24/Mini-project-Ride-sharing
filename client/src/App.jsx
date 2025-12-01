@@ -14,6 +14,15 @@ import MyRides from './pages/MyRides';
 import Profile from './pages/Profile';
 import PublicProfile from './pages/PublicProfile';
 import ForgotPassword from './pages/ForgotPassword';
+import AdminLayout from './components/admin/AdminLayout';
+import AdminRoute from './components/admin/AdminRoute';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import UserManagement from './pages/admin/UserManagement';
+import RecycleBin from './pages/admin/RecycleBin';
+import UserDetails from './pages/admin/UserDetails';
+import RideManagement from './pages/admin/RideManagement';
+
+
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -32,8 +41,9 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <Layout>
-          <Routes>
+        <Routes>
+          {/* Main App Layout */}
+          <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -74,8 +84,24 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-          </Routes>
-        </Layout>
+          </Route>
+
+          {/* Admin Routes - Separate Layout */}
+          <Route path="/admin" element={<AdminRoute />}>
+            <Route element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="users" element={<UserManagement />} />
+              <Route path="users/:id" element={<UserDetails />} />
+              <Route path="recycle-bin" element={<RecycleBin />} />
+              <Route path="rides-management" element={<RideManagement />} />
+
+              <Route path="rides" element={<SearchRides />} />
+              <Route path="create-ride" element={<CreateRide />} />
+              <Route path="my-rides" element={<MyRides />} />
+              <Route path="profile" element={<Profile />} />
+            </Route>
+          </Route>
+        </Routes>
       </AuthProvider>
     </Router>
   );
